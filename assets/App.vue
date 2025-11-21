@@ -40,7 +40,7 @@
         </button>
         <Menu
           v-model="showMenu"
-          :items="[{ text: '名称A-Z' }, { text: '大小↑' } ,{ text: '大小↓' }, { text: '粘贴' }]"
+          :items="[{ text: '名稱A-Z' }, { text: '大小↑' } ,{ text: '大小↓' }, { text: '貼上' }]"
           @click="onMenuClick"
         />
       </div>
@@ -133,13 +133,13 @@
       </li>
     </ul>
     <div v-if="loading" style="margin-top: 12px; text-align: center">
-      <span>加载中...</span>
+      <span>載入中...</span>
     </div>
     <div
       v-else-if="!filteredFiles.length && !filteredFolders.length"
       style="margin-top: 12px; text-align: center"
     >
-      <span>没有文件</span>
+      <span>沒有檔案</span>
     </div>
     <Dialog v-model="showContextMenu">
       <div
@@ -148,20 +148,20 @@
         @click.stop.prevent
       ></div>
       <ul v-if="typeof focusedItem === 'string'" class="contextmenu-list">
-        <!-- 【新增】1. 在这里添加下载文件夹按钮 -->
+        <!-- 【新增】1. 在這裡新增下載資料夾按鈕 -->
         <li>
           <button @click="downloadFolder">
-            <span>下载文件夹</span>
+            <span>下載資料夾</span>
           </button>
         </li>
         <li>
           <button @click="copyLink(`/?p=${encodeURIComponent(focusedItem)}`)">
-            <span>复制链接</span>
+            <span>複製鏈接</span>
           </button>
         </li>
         <li>
           <button @click="moveFile(focusedItem + '_$folder$')">
-            <span>移动</span>
+            <span>移動</span>
           </button>
         </li>
         <li>
@@ -169,39 +169,39 @@
             style="color: red"
             @click="removeFile(focusedItem + '_$folder$')"
           >
-            <span>删除</span>
+            <span>刪除</span>
           </button>
         </li>
       </ul>
       <ul v-else class="contextmenu-list">
         <li>
           <button @click="renameFile(focusedItem.key)">
-            <span>重命名</span>
+            <span>重新命名</span>
           </button>
         </li>
         <li>
           <a :href="`/raw/${focusedItem.key}`" target="_blank" download>
-            <span>下载</span>
+            <span>下載</span>
           </a>
         </li>
         <li>
           <button @click="clipboard = focusedItem.key">
-            <span>复制</span>
+            <span>複製</span>
           </button>
         </li>
         <li>
           <button @click="moveFile(focusedItem.key)">
-            <span>移动</span>
+            <span>移動</span>
           </button>
         </li>
         <li>
           <button @click="copyLink(`/raw/${focusedItem.key}`)">
-            <span>复制链接</span>
+            <span>複製鏈接</span>
           </button>
         </li>
         <li>
           <button style="color: red" @click="removeFile(focusedItem.key)">
-            <span>删除</span>
+            <span>刪除</span>
           </button>
         </li>
       </ul>
@@ -273,7 +273,7 @@ export default {
 
     async createFolder() {
       try {
-        const folderName = window.prompt("请输入文件夹名称");
+        const folderName = window.prompt("請輸入資料夾名稱");
         if (!folderName) return;
         this.showUploadPopup = false;
         const uploadUrl = `/api/write/items/${this.cwd}${folderName}/_$folder$`;
@@ -289,7 +289,7 @@ export default {
       }
     },
 
-    // 【新增】2. 在这里添加下载文件夹功能的函数
+    // 【新增】2. 在這裡新增下載資料夾功能的函式
     downloadFolder() {
       if (typeof this.focusedItem === 'string') {
         const folderPath = this.focusedItem;
@@ -340,7 +340,7 @@ export default {
 
     onMenuClick(text) {
       switch (text) {
-        case "名称A-Z":
+        case "名稱A-Z":
           this.order = null;
           break;
         case "大小↑":
@@ -349,7 +349,7 @@ export default {
         case "大小↓":
           this.order = "大小↓";
           break;
-        case "粘贴":
+        case "貼上":
           return this.pasteFile();
       }
       this.files.sort((a, b) => {
@@ -445,13 +445,13 @@ export default {
     },
 
     async removeFile(key) {
-      if (!window.confirm(`确定要删除 ${key} 吗？`)) return;
+      if (!window.confirm(`確定要刪除 ${key} 嗎？`)) return;
       await axios.delete(`/api/write/items/${key}`);
       this.fetchFiles();
     },
 
     async renameFile(key) {
-      const newName = window.prompt("重命名为:");
+      const newName = window.prompt("重新命名為:");
       if (!newName) return;
       await this.copyPaste(key, `${this.cwd}${newName}`);
       await axios.delete(`/api/write/items/${key}`);
@@ -459,11 +459,11 @@ export default {
     },
 
     async moveFile(key) {
-      // 获取当前的目录结构
-      const currentPath = this.cwd; // 当前所在目录
-      const allFolders = [...this.folders]; // 所有可用目录
+      // 獲取目前的目錄結構
+      const currentPath = this.cwd; // 目前所在目錄
+      const allFolders = [...this.folders]; // 所有可用目錄
       
-      // 如果不在根目录，添加返回上级目录选项
+      // 如果不在根目錄，新增返回上級目錄選項
       if (currentPath !== '') {
         const parentPath = currentPath.replace(/[^\/]+\/$/, '');
         if (!allFolders.includes(parentPath) && parentPath !== '') {
@@ -471,15 +471,15 @@ export default {
         }
       }
       
-      // 添加根目录选项
+      // 新增根目錄選項
       if (!allFolders.includes('')) {
         allFolders.unshift('');
       }
       
-      // 构建选择列表
+      // 構建選擇列表
       const folderOptions = allFolders.map(folder => {
-        const displayName = folder === '' ? '根目录' : 
-                          folder === currentPath ? '当前目录' :
+        const displayName = folder === '' ? '根目錄' : 
+                          folder === currentPath ? '目前目錄' :
                           folder.replace(/.*\/(?!$)|\//g, '') + '/';
         return {
           display: displayName,
@@ -487,89 +487,89 @@ export default {
         };
       });
       
-      // 创建选择提示
+      // 建立選擇提示
       const options = folderOptions.map((opt, index) => 
         `${index + 1}. ${opt.display}`
       ).join('\n');
       
-      const promptText = `请选择目标目录(输入数字):\n${options}\n`;
+      const promptText = `請選擇目標目錄(輸入數字):\n${options}\n`;
       const selection = window.prompt(promptText);
       
       if (!selection) return;
       
       const selectedIndex = parseInt(selection) - 1;
       if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= folderOptions.length) {
-        alert('无效的选择');
+        alert('無效的選擇');
         return;
       }
       
       const targetPath = folderOptions[selectedIndex].value;
       
-      // 获取文件名
+      // 獲取檔名
       const fileName = key.split('/').pop();
-      // 如果是文件夹,需要移除_$folder$后缀
+      // 如果是資料夾,需要移除_$folder$後綴
       const finalFileName = fileName.endsWith('_$folder$') ? fileName.slice(0, -9) : fileName;
       
-      // 修复：正确处理目标路径，避免双斜杠
+      // 修復：正確處理目標路徑，避免雙斜槓
       const normalizedPath = targetPath === '' ? '' : (targetPath.endsWith('/') ? targetPath : targetPath + '/');
       
       try {
-        // 如果是目录（以_$folder$结尾），则需要移动整个目录内容
+        // 如果是目錄（以_$folder$結尾），則需要移動整個目錄內容
         if (key.endsWith('_$folder$')) {
-          // 获取源目录的基础路径（移除_$folder$后缀）
+          // 獲取源目錄的基礎路徑（移除_$folder$後綴）
           const sourceBasePath = key.slice(0, -9);
-          // 获取目标目录的基础路径，修复根目录的情况
+          // 獲取目標目錄的基礎路徑，修復根目錄的情況
           const targetBasePath = normalizedPath + finalFileName + '/';
           
-          // 递归获取所有子文件和子目录
+          // 遞迴獲取所有子檔案和子目錄
           const allItems = await this.getAllItems(sourceBasePath);
           
-          // 显示进度提示
+          // 顯示進度提示
           const totalItems = allItems.length;
           let processedItems = 0;
           
-          // 移动所有项目
+          // 移動所有專案
           for (const item of allItems) {
             const relativePath = item.key.substring(sourceBasePath.length);
             const newPath = targetBasePath + relativePath;
             
             try {
-              // 复制到新位置
+              // 複製到新位置
               await this.copyPaste(item.key, newPath);
-              // 删除原位置
+              // 刪除原位置
               await axios.delete(`/api/write/items/${item.key}`);
               
-              // 更新进度
+              // 更新進度
               processedItems++;
               this.uploadProgress = (processedItems / totalItems) * 100;
             } catch (error) {
-              console.error(`移动 ${item.key} 失败:`, error);
+              console.error(`移動 ${item.key} 失敗:`, error);
             }
           }
           
-          // 移动目录标记
+          // 移動目錄標記
           const targetFolderPath = targetBasePath.slice(0, -1) + '_$folder$';
           await this.copyPaste(key, targetFolderPath);
           await axios.delete(`/api/write/items/${key}`);
           
-          // 清除进度
+          // 清除進度
           this.uploadProgress = null;
         } else {
-          // 单文件移动逻辑，修复根目录的情况
+          // 單檔案移動邏輯，修復根目錄的情況
           const targetFilePath = normalizedPath + finalFileName;
           await this.copyPaste(key, targetFilePath);
           await axios.delete(`/api/write/items/${key}`);
         }
         
-        // 刷新文件列表
+        // 重新整理檔案列表
         this.fetchFiles();
       } catch (error) {
-        console.error('移动失败:', error);
-        alert('移动失败,请检查目标路径是否正确');
+        console.error('移動失敗:', error);
+        alert('移動失敗,請檢查目標路徑是否正確');
       }
     },
 
-    // 新增：递归获取目录下所有文件和子目录
+    // 新增：遞迴獲取目錄下所有檔案和子目錄
     async getAllItems(prefix) {
       const items = [];
       let marker = null;
@@ -583,19 +583,19 @@ export default {
         const response = await fetch(url);
         const data = await response.json();
         
-        // 添加文件
+        // 新增檔案
         items.push(...data.value);
         
-        // 处理子目录
+        // 處理子目錄
         for (const folder of data.folders) {
-          // 添加目录标记
+          // 新增目錄標記
           items.push({
             key: folder + '_$folder$',
             size: 0,
             uploaded: new Date().toISOString(),
           });
           
-          // 递归获取子目录内容
+          // 遞迴獲取子目錄內容
           const subItems = await this.getAllItems(folder);
           items.push(...subItems);
         }
@@ -631,7 +631,7 @@ export default {
         }
         document.title = `${
           this.cwd.replace(/.*\/(?!$)|\//g, "") || "/"
-        } - 文件库`;
+        } - 檔案庫`;
       },
       immediate: true,
     },
